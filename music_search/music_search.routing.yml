@@ -1,4 +1,4 @@
-music_search.hello:
+music_search.search:
   path: '/musicsearch'
   defaults:
     _controller: Drupal\music_search\Controller\MusicSearchController::getUserInput
