@@ -1,4 +1,4 @@
-hello_world.hello:
+music_search.search:
   path: '/musicsearch'
   defaults:
     _controller: Drupal\music_search\Controller\MusicSearchController::musicSearchPrintFunc
