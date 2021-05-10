@@ -1,0 +1,7 @@
+hello_world.hello:
+  path: '/musicsearch'
+  defaults:
+    _controller: Drupal\music_search\Controller\MusicSearchController::musicSearchPrintFunc
+    _title: 'Music Search Path.'
+  requirements:
+    _permission: 'access content'
