@@ -20,8 +20,11 @@ class MusicSearchController extends ControllerBase {
 
   public function getUserInput() {
     $output = '';
-    $output .= '<input type="text" >';
-
+    $output .= '<form method="post">';
+    $output .= '<input type="text" name="sstring">';
+    $output .= '<input type="submit">';
+    $output .= '</form>';
+    
     return [
       '#markup' => Markup::create($output),
     ];
