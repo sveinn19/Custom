@@ -1,7 +1,15 @@
 music_search.search:
   path: '/musicsearch'
   defaults:
-    _controller: Drupal\music_search\Controller\MusicSearchController::getUserInput
+    _controller: Drupal\music_search\Controller\MusicSearchController::musicSearchPrintFunc
     _title: 'Music Search Path.'
   requirements:
     _permission: 'access content'
+
+music_search.searchForm:
+  path: '/musicsearch'
+  defaults:
+    _form: Drupal\music_search\Form\SearchMusicForm
+    _title: 'Search for music'
+  requirements:
+    _permissions: 'access content'

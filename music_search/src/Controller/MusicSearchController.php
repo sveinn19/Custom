@@ -13,6 +13,8 @@ class MusicSearchController extends ControllerBase {
    *   Our message.
    */
   public function musicSearchPrintFunc() {
+    // $form = \Drupal::formBuilder()->getForm('Drupal\music_search\Form\SearchMusicForm');
+
     return [
       '#markup' => $this->t('This will be our music search page.'),
     ];
@@ -24,11 +26,11 @@ class MusicSearchController extends ControllerBase {
     $output .= '<input type="text" name="sstring">';
     $output .= '<input type="submit">';
     $output .= '</form>';
+    console.log("texti");
     
     return [
       '#markup' => Markup::create($output),
     ];
-
 
   }
 }
