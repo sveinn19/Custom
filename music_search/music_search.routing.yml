@@ -2,7 +2,7 @@ music_search.search:
   path: '/musicsearch'
   defaults:
     _controller: Drupal\music_search\Controller\MusicSearchController::musicSearchPrintFunc
-    _title: 'Music Search Path.'
+    _title: 'Music Search Tool.'
   requirements:
     _permission: 'access content'
 
