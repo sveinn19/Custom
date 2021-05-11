@@ -8,10 +8,10 @@ use Drupal\Core\Form\FormBase;
 * Form for searching music.
  */
 
- class MusicSearch extends FormBase{
+ class MusicSearchForm extends FormBase{
 
     public function getFormId(){
-        return 'music_search_form';
+        return 'music_search_form1';
     }
 
     public function buildForm(array $form, FormStateInterface $form_state){
@@ -21,13 +21,17 @@ use Drupal\Core\Form\FormBase;
 
         );
 
+        $form['submit'] = array(
+            '#type' => 'submit',
+            '#value' => $this->t('Submit'),
+
+        );
+
         return $form;
     }
 
     public function submitForm(array &$form, FormStateInterface $form_state){
-        return [
-            '#markup' => $this->t($form_state->getValue('sstring')),
-          ];
+        \Drupal::messenger()->addMessage($form_state->getValue('sstring'));
 
     }
 

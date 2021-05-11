@@ -6,10 +6,10 @@ music_search.search:
   requirements:
     _permission: 'access content'
 
-music_search.searchForm:
-  path: '/musicsearch'
+music_search.search_form:
+  path: '/testy'
   defaults:
-    _form: Drupal\music_search\Form\SearchMusicForm
+    _form: 'Drupal\music_search\Form\MusicSearchForm'
     _title: 'Search for music'
   requirements:
-    _permissions: 'access content'
+    _permission: 'access content'
