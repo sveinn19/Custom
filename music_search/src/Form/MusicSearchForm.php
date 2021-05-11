@@ -15,6 +15,18 @@ use Drupal\Core\Form\FormBase;
     }
 
     public function buildForm(array $form, FormStateInterface $form_state){
+        $form['search_in']['type_select'] = array(
+            '#type' => 'select',
+            '#title' => $this->t('Select content to search for.'),
+            '#options' => array(
+                'all' => t('All'),
+                'records' => t('Records'),
+                'artist' => t('Artists'),
+                'labels' => t('Labels'),
+                'song' => t('Songs'),
+            ),
+        );
+
         $form['sstring'] = array(
             '#type' => 'textfield',
             '#title' => $this->t("Searchbar"),
@@ -31,7 +43,7 @@ use Drupal\Core\Form\FormBase;
     }
 
     public function submitForm(array &$form, FormStateInterface $form_state){
-        \Drupal::messenger()->addMessage($form_state->getValue('sstring'));
+        \Drupal::messenger()->addMessage(t('Searching for ') . $form_state->getValue('sstring') . t(' in ').  $form_state->getValue('type_select'));
 
     }
 
