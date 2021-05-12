@@ -1,0 +1,5 @@
+name: Discogs Lookup
+description: Discogs Lookup Module
+type: module
+core_version_requirement: ^9
+package: custom

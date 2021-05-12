@@ -20,11 +20,11 @@ class HelloWorldController extends ControllerBase {
    * 
    *  @var \Drupal\hello_world\HelloWorldSalutation
    */
-protected $salutation;
+   protected $salutation;
 /**
  * HelloWorldController constructor.
  *
- * @param \Drupal\hello_world\HelloWorldSalutation $salutation
+ * @param HelloWorldSalutation $salutation
  */
 
 
@@ -44,7 +44,7 @@ protected $salutation;
 
   public function helloWorld() {
     return [
-      '#markup' => $this-> salutation -> getSalutation(),
+      '#markup' => $this->salutation->getSalutation()
     ];
   }
 }

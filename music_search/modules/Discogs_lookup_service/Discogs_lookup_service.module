@@ -1,0 +1,23 @@
+/**
+ * @file
+ * Discogs Lookup Module file
+ */
+
+<?php
+
+use Drupal\Core\Routing\RouteMatchInterface;
+/**
+ * Implements hook_help().
+ */
+function Discogs_lookup_service_help($route_name, RouteMatchInterface $route_match) {
+  switch ($route_name) {
+    case 'help.page.Discogs_lookup_service':
+      $output = '';
+      $output .= '<h3>' . t('About') . '</h3>';
+      $output .= '<h2>' . t('To be implemented') . '</h2>';
+
+
+      return $output;
+    default:
+  }
+}
