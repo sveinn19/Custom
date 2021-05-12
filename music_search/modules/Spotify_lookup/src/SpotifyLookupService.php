@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal\music_search\Form;
+namespace Drupal\music_search\Controller\MusicSearchController;
 
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Form\FormBase;
@@ -10,7 +10,7 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Drupal\Component\Serialization\Json.php;
 
-class SpotifyLookupService extends FormBase{
+class SpotifyLookupService {
 /**
  * Sends a GET query to Spotify for specific URL
  *
@@ -98,6 +98,7 @@ public function _spotify_api_get_query($uri) {
   public function _spotify_api_get_auth_token() {
     $connection_string = "https://accounts.spotify.com/api/token";
     //$key = base64_encode(SPOTIFY_API_CLIENT_ID . ':' . SPOTIFY_API_CLIENT_SECRET);
+    $key = base64_encode('0179a2a0b37440a191eb43966c770e39' . ':' . 'acac856d0bb54643b8869c49fb5c95dc');
     $ch = curl_init();
   
     curl_setopt($ch, CURLOPT_URL, $connection_string);
