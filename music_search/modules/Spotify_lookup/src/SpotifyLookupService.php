@@ -1,8 +1,14 @@
 <?php
 
+namespace Drupal\music_search\Form;
 
-$bandname = 'Beatles'
-
+use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Form\FormBase;
+use Drupal\Core\Url;
+use Drupal\node\Entity\Node;
+use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpFoundation\Request;
+use Drupal\Component\Serialization\Json.php;
 
 
 /**
@@ -32,17 +38,17 @@ function _spotify_api_get_query($uri) {
         ),
       );
   
-      $search_results = drupal_http_request($uri, $options);
+      $search_results = \Drupal::httpClient()->get($uri, $options);
   
       if (empty($search_results->error)) {
-        $search_results = drupal_json_decode($search_results->data);
+        $search_results = json_decode($search_results->data,TRUE);
         _spotify_api_set_cache_search($uri, $search_results);
   
       }
       else {
-        drupal_set_message(t('The search request resulted in the following error: @error.', array(
-          '@error' => $search_results->error,
-        )));
+        '@error' => $search_results->error
+        \Drupal::messenger()->addMessage(t('The search request resulted in the following error: @error.' . $form_state->getValue('@error') 
+        ));
   
         return $search_results->error;
       }
@@ -50,6 +56,10 @@ function _spotify_api_get_query($uri) {
   
     return $search_results;
   }
+
+    
+}
+
   
   /**
    * Saves a search to Drupal's internal cache.
