@@ -3,6 +3,9 @@ namespace Drupal\music_search\Form;
 
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Form\FormBase;
+use Drupal\Core\Url;
+use Drupal\node\Entity\Node;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 
 /**
 * Form for searching music.
@@ -45,8 +48,9 @@ use Drupal\Core\Form\FormBase;
     public function submitForm(array &$form, FormStateInterface $form_state){
         \Drupal::messenger()->addMessage(t('Searching for ') . $form_state->getValue('sstring') . t(' in ').  $form_state->getValue('type_select'));
 
+        $redirect = new RedirectResponse(Url::fromUserInput('/musicsearch')->toString());
+        $redirect->send();
+        
     }
-
-
 
  }

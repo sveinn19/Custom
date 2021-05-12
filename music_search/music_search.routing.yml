@@ -1,5 +1,5 @@
 music_search.search:
-  path: '/musicsearch'
+  path: '/musicsearch/{type}/{string}'
   defaults:
     _controller: Drupal\music_search\Controller\MusicSearchController::musicSearchPrintFunc
     _title: 'Music Search Tool.'
