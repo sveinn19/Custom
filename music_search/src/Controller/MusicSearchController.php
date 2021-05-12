@@ -12,14 +12,19 @@ class MusicSearchController extends ControllerBase {
    * @return array
    *   Our message.
    */
-  public function musicSearchPrintFunc(FormStateInterface $form_state) {
+  public function musicSearchPrintFunc() {
     // $form = \Drupal::formBuilder()->getForm('Drupal\music_search\Form\MusicSearchForm');
 
     // return $form;
 
+    // $type = \Drupal::request()->query->get('type');
+    $sstring = \Drupal::routeMatch()->getParameter('string');
+    $type = \Drupal::routeMatch()->getParameter('type');
+  //  $request->attributes->get('_raw_variables')->get('user')
+
     return [
-      '#markup' => $form_state->getValue('sstring'),
-    ] ;
+      '#markup' => $this->t('name= '). t($sstring). t(' type= ') . t($type),
+    ];
 
   }
 

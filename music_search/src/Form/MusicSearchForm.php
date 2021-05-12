@@ -48,8 +48,13 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
     public function submitForm(array &$form, FormStateInterface $form_state){
         \Drupal::messenger()->addMessage(t('Searching for ') . $form_state->getValue('sstring') . t(' in ').  $form_state->getValue('type_select'));
 
-        $redirect = new RedirectResponse(Url::fromUserInput('/musicsearch')->toString());
-        $redirect->send();
+        // $redirect = new RedirectResponse(Url::fromUserInput('/musicsearch')->toString());
+        // $redirect->send();
+
+        $url = \Drupal\Core\Url::fromRoute('music_search.search')
+          ->setRouteParameters(array('type'=>$form_state->getValue('type_select'),'string'=>$form_state->getValue('sstring')));
+
+        $form_state->setRedirectUrl($url);
         
     }
 
