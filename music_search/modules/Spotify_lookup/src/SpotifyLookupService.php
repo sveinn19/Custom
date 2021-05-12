@@ -10,7 +10,7 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Drupal\Component\Serialization\Json.php;
 
-
+class SpotifyLookupService extends FormBase{
 /**
  * Sends a GET query to Spotify for specific URL
  *
@@ -19,7 +19,7 @@ use Drupal\Component\Serialization\Json.php;
  * @return object
  *   Returns a stdClass with the search results or an error message
  */
-function _spotify_api_get_query($uri) {
+public function _spotify_api_get_query($uri) {
     $cache = _spotify_api_get_cache_search($uri);
     $search_results = null;
   
@@ -58,7 +58,7 @@ function _spotify_api_get_query($uri) {
   }
 
     
-}
+
 
   
   /**
@@ -69,7 +69,7 @@ function _spotify_api_get_query($uri) {
    * @param array $data
    *   The data to cache.
    */
-  function _spotify_api_set_cache_search($cid, array $data) {
+  public function _spotify_api_set_cache_search($cid, array $data) {
     cache_set($cid, $data, 'spotify-api-cache', time() + SPOTIFY_CACHE_LIFETIME);
   }
   
@@ -82,7 +82,7 @@ function _spotify_api_get_query($uri) {
    * @return array|bool
    *   Returns either the cache results or false if nothing is found.
    */
-  function _spotify_api_get_cache_search($cid) {
+  public function _spotify_api_get_cache_search($cid) {
     $cache = cache_get($cid, 'spotify-api-cache');
     if (!empty($cache)) {
       if ($cache->expire > time()) {
@@ -95,7 +95,7 @@ function _spotify_api_get_query($uri) {
   /**
    * Gets Auth token from the Spotify API
    */
-  function _spotify_api_get_auth_token() {
+  public function _spotify_api_get_auth_token() {
     $connection_string = "https://accounts.spotify.com/api/token";
     //$key = base64_encode(SPOTIFY_API_CLIENT_ID . ':' . SPOTIFY_API_CLIENT_SECRET);
     $ch = curl_init();
@@ -115,3 +115,4 @@ function _spotify_api_get_query($uri) {
     curl_close ($ch);
     return $result;
   }
+}
