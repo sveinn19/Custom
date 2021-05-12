@@ -1,5 +1,10 @@
 <?php
 
+
+$bandname = 'Beatles'
+
+
+
 /**
  * Sends a GET query to Spotify for specific URL
  *
