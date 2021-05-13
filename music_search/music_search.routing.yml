@@ -13,3 +13,13 @@ music_search.search_form:
     _title: 'Search for music'
   requirements:
     _permission: 'access content'
+
+
+music_search.result_form:
+    path: '/result-search'
+    defaults:
+      _form: 'Drupal\music_search\Form\ResultForm'
+      _title: 'Result of search'
+    requirements:
+      _permission: 'access content'
+    

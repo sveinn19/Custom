@@ -50,7 +50,7 @@ class MusicSearchController extends ControllerBase {
 
     return [
       // '#markup' => $this->t('name= '). t($sstring). t(' type= ') . t($type),
-      '#markup' => "<pre>".print_r($this->spotify_service->_spotify_api_get_query($uri), true)."</pre>",
+      '#markup' => '<h2>'. t('Results from spotify:') . '</h2></br>' . "<pre>".print_r($this->spotify_service->_spotify_api_get_query($uri), true)."</pre>",
       //http_build_query($this->spotify_service->_spotify_api_get_query($uri)), //_spotify_api_get_query($sstring),
     ];
 
