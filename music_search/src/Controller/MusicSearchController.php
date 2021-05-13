@@ -48,11 +48,17 @@ class MusicSearchController extends ControllerBase {
     //   '#markup' => http_build_query($this->spotify_service->_spotify_api_get_query($uri)), //_spotify_api_get_query($sstring),
     // ];
 
-    return [
-      // '#markup' => $this->t('name= '). t($sstring). t(' type= ') . t($type),
-      '#markup' => '<h2>'. t('Results from spotify:') . '</h2></br>' . "<pre>".print_r($this->spotify_service->_spotify_api_get_query($uri), true)."</pre>",
-      //http_build_query($this->spotify_service->_spotify_api_get_query($uri)), //_spotify_api_get_query($sstring),
-    ];
+    $result = $this->spotify_service->_spotify_api_get_query($uri);
+    $_SESSION['s1'] = $result;
+
+    $form = \Drupal::formBuilder()->getForm('Drupal\music_search\Form\ResultForm');
+    
+    return $form;
+    // return [
+    //   // '#markup' => $this->t('name= '). t($sstring). t(' type= ') . t($type),
+    //   '#markup' => '<h2>'. t('Results from spotify:') . '</h2></br>' . "<pre>".print_r($result['artists']['items'][0]['followers']['total'], true)."</pre>",
+    //   //http_build_query($this->spotify_service->_spotify_api_get_query($uri)), //_spotify_api_get_query($sstring),
+    // ];
 
     // return $this->spotify_service->_spotify_api_get_query('https://api.spotify.com/v1/search?q=abba&type=album');
 
