@@ -1,3 +1,0 @@
-services:
-  Spotify_lookup.lookup:
-    class: Drupal\music_search\modules\Spotify_lookup\SpotifyLookupService

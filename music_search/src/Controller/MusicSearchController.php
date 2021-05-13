@@ -3,7 +3,7 @@ namespace Drupal\music_search\Controller;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Render\Markup;
 use Symfony\Component\DependencyInjection\ContainerInterface;
-use Drupal\music_search\modules\Spotify_lookup\SpotifyLookupService;
+//use Drupal\music_search\Spotify_lookup\SpotifyLookupService;
 /**
  * Controller for the salutation message.
  */
@@ -15,7 +15,7 @@ class MusicSearchController extends ControllerBase {
    *   Our message.
    */
 
-  protected $spotify_service;
+  //protected $spotify_service;
 
 
   public function __construct($spotify_service) {  
@@ -26,7 +26,7 @@ class MusicSearchController extends ControllerBase {
      * */
   public static function create(ContainerInterface $container) { 
      return new static(    
-       $container->get('Spotify_lookup.lookup')  
+       $container->get('spotify_lookup.spotify_lookup')  
        );
      }
 
@@ -40,10 +40,13 @@ class MusicSearchController extends ControllerBase {
     $type = \Drupal::routeMatch()->getParameter('type');
   //  $request->attributes->get('_raw_variables')->get('user')
 
+    //$test->_spotify_api_get_query('ABBA');
+
     return [
       // '#markup' => $this->t('name= '). t($sstring). t(' type= ') . t($type),
-      '#markup' => $this->spotify_service->_spotify_api_get_query($sstring),
+      '#markup' => $this->spotify_service->_spotify_api_get_query('https://api.spotify.com/v1/search?q=abba&type=album'), //_spotify_api_get_query($sstring),
     ];
+
 
   }
 
