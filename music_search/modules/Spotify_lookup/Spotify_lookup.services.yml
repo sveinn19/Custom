@@ -1,7 +1,0 @@
-services:
-  Spotify_lookup.lookup:
-<<<<<<< HEAD
-    class: Drupal\music_search\modules\Spotify_lookup\SpotifyLookupService
-=======
-    class: Drupal\music_search\modules\Spotify_lookup\SpotifyLookupService
->>>>>>> eae23d1745cc717f596062b538aeee9b58cb3609

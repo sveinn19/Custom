@@ -1,14 +1,14 @@
 <?php
 
-namespace Drupal\music_search\Controller\MusicSearchController;
+namespace Drupal\spotify_lookup;
 
-use Drupal\Core\Form\FormStateInterface;
-use Drupal\Core\Form\FormBase;
 use Drupal\Core\Url;
+use Drupal\Core\Cache\Cache;
 use Drupal\node\Entity\Node;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Drupal\Component\Serialization\Json.php;
+use Drupal\Component\Serialization\Json;
+use Drupal\Core\Cache\CacheBackendInterface;
 
 class SpotifyLookupService {
 /**
@@ -19,43 +19,43 @@ class SpotifyLookupService {
  * @return object
  *   Returns a stdClass with the search results or an error message
  */
-public function _spotify_api_get_query($uri) {
-    $cache = _spotify_api_get_cache_search($uri);
-    $search_results = null;
-  
-    if (!empty($cache)) {
-      $search_results = $cache;
-    }
-    else {
-      $token = _spotify_api_get_auth_token();
-      $token = json_decode($token);
-      $options = array(
-        'method' => 'GET',
-        'timeout' => 3,
-        'headers' => array(
-          'Accept' => 'application/json',
-          'Authorization' => "Bearer " . $token->access_token,
-        ),
-      );
-  
-      $search_results = \Drupal::httpClient()->get($uri, $options);
-  
-      if (empty($search_results->error)) {
-        $search_results = json_decode($search_results->data,TRUE);
-        _spotify_api_set_cache_search($uri, $search_results);
-  
+
+  public function _spotify_api_get_query($uri) {
+      $cache = $this->_spotify_api_get_cache_search($uri);
+      $search_results = null;
+    
+      if (!empty($cache)) {
+        $search_results = $cache;
       }
       else {
-        '@error' => $search_results->error
-        \Drupal::messenger()->addMessage(t('The search request resulted in the following error: @error.' . $form_state->getValue('@error') 
-        ));
-  
-        return $search_results->error;
+        $token = $this->_spotify_api_get_auth_token();
+        $token = json_decode($token);
+        $options = array(
+          'method' => 'GET',
+          'timeout' => 3,
+          'headers' => array(
+            'Accept' => 'application/json',
+            'Authorization' => 'Bearer ' . $token->access_token,
+          ),
+        );
+    
+        $search_results = \Drupal::httpClient()->get($uri, $options);
+    
+        if (empty($search_results->error)) {
+          $search_results = json_decode($search_results->data); //breyata til baka
+          $this->_spotify_api_set_cache_search($uri, [$search_results]);
+    
+        }
+        else {
+          \Drupal::messenger()->addMessage(t('The search request resulted in the following error: @error.') . array('@error' => $search_results->error,)
+          );
+    
+          return $search_results->error;
+        }
       }
+    
+      return $search_results;
     }
-  
-    return $search_results;
-  }
 
     
 
@@ -70,7 +70,11 @@ public function _spotify_api_get_query($uri) {
    *   The data to cache.
    */
   public function _spotify_api_set_cache_search($cid, array $data) {
-    cache_set($cid, $data, 'spotify-api-cache', time() + SPOTIFY_CACHE_LIFETIME);
+    //cache_set($cid, $data, 'spotify-api-cache', time() + SPOTIFY_CACHE_LIFETIME);
+    \Drupal::cache()
+      ->set($cid, $data, CacheBackendInterface::CACHE_PERMANENT);
+
+    //$cache->set($cid, $data, CacheBackendInterface::CACHE_PERMANENT, 'spotify-api-cache');
   }
   
   /**
@@ -83,7 +87,10 @@ public function _spotify_api_get_query($uri) {
    *   Returns either the cache results or false if nothing is found.
    */
   public function _spotify_api_get_cache_search($cid) {
-    $cache = cache_get($cid, 'spotify-api-cache');
+
+    //$cache = cache_get($cid, 'spotify-api-cache');
+    $cache = \Drupal::cache()->get($cid);
+
     if (!empty($cache)) {
       if ($cache->expire > time()) {
         return $cache->data;
@@ -107,7 +114,7 @@ public function _spotify_api_get_query($uri) {
     curl_setopt($ch, CURLOPT_POST, 1);
   
     $headers = array();
-    $headers[] = "Authorization: Basic " . $key;
+    $headers[] = 'Authorization: Basic ' . $key;
     $headers[] = "Content-Type: application/x-www-form-urlencoded";
     curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
   
