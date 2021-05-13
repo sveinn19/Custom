@@ -41,7 +41,7 @@ class MusicSearchController extends ControllerBase {
   //  $request->attributes->get('_raw_variables')->get('user')
 
     //$test->_spotify_api_get_query('ABBA');
-    $uri = 'https://api.spotify.com/v1/search?q=' . $sstring . '&' . 'type=album';
+    $uri = 'https://api.spotify.com/v1/search?q=' . $sstring . '&' . 'type=' . $type;
 
     return [
       // '#markup' => $this->t('name= '). t($sstring). t(' type= ') . t($type),

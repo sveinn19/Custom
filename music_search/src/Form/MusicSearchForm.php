@@ -23,10 +23,9 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
             '#title' => $this->t('Select content to search for.'),
             '#options' => array(
                 'all' => t('All'),
-                'records' => t('Records'),
+                'album' => t('Album'),
                 'artist' => t('Artists'),
-                'labels' => t('Labels'),
-                'song' => t('Songs'),
+                'track' => t('Songs'),
             ),
         );
 
