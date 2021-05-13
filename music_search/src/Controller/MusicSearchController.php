@@ -2,8 +2,12 @@
 namespace Drupal\music_search\Controller;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Render\Markup;
+<<<<<<< HEAD
+use /home/magnusarni/website/ru/Tónlistarskráningarkerfi/web/modules/Custom/music_search/modules/Spotify_lookup/src/SpotifyLookupService.php::SpotifyLookupService;
+=======
 use Symfony\Component\DependencyInjection\ContainerInterface;
 //use Drupal\music_search\Spotify_lookup\SpotifyLookupService;
+>>>>>>> d9ee67d09f0688c40e8594f5a2076fb966cd4bcf
 /**
  * Controller for the salutation message.
  */
