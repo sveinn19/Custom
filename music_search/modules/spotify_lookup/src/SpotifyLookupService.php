@@ -9,6 +9,7 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Drupal\Component\Serialization\Json;
 use Drupal\Core\Cache\CacheBackendInterface;
+use GuzzleHttp\Client;
 
 class SpotifyLookupService {
 /**
@@ -40,10 +41,11 @@ class SpotifyLookupService {
         );
     
         $search_results = \Drupal::httpClient()->get($uri, $options);
-    
+        
+
         if (empty($search_results->error)) {
-          $search_results = json_decode($search_results->data); //breyata til baka
-          $this->_spotify_api_set_cache_search($uri, [$search_results]);
+          $search_results = json_decode($search_results->getBody(), TRUE);
+          $this->_spotify_api_set_cache_search($uri, $search_results);
     
         }
         else {
