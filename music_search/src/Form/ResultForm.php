@@ -17,22 +17,28 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
         return 'result_form';
     }
 
+
     public function buildForm(array $form, FormStateInterface $form_state){
         // TYPES
-        // 'all' => t('All'),
         // 'album' => t('Album'),
         // 'artist' => t('Artists'),
         // 'track' => t('Songs'),
 
+        $form['back'] = array(
+            '#type' => 'button',
+            '#value' => t('Search more music.'),
+            '#attributes' => array(
+              'onclick' => 'window.history.back();return false;',
+            ),
+          );
+
         if ($_SESSION['s2'] == 'artist'){
-            // $img_url = $_SESSION['s1']['artists']['items'][0]['images'][0]['url'];
-            // $img_url2 = $_SESSION['s1']['artists']['items'][1]['images'][0]['url'];
             $arr = $_SESSION['s1']['artists']['items'];
 
-            $form['test'] = array(
-                '#type' => 'radios',
+            $form['test'] = array(                
                 '#suffix' => '<pre>' . print_r($arr, true) . '</pre>',
                 '#options' => $this->artist_option($arr),
+                '#type' => 'radios',
             );
 
         } elseif ($_SESSION['s2'] == 'album'){
