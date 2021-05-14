@@ -50,6 +50,7 @@ class MusicSearchController extends ControllerBase {
 
     $result = $this->spotify_service->_spotify_api_get_query($uri);
     $_SESSION['s1'] = $result;
+    $_SESSION['s2'] = $type;
 
     $form = \Drupal::formBuilder()->getForm('Drupal\music_search\Form\ResultForm');
     
