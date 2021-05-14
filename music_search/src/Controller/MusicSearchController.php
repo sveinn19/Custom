@@ -41,8 +41,13 @@ class MusicSearchController extends ControllerBase {
     $form = \Drupal::formBuilder()->getForm('Drupal\music_search\Form\ResultForm');
     
     return $form;
+  }
 
+  public function createContentForm() {
 
+    $form = \Drupal::formBuilder()->getForm('Drupal\music_search\Form\CreateContentForm');
+    
+    return $form;
 
   }
 

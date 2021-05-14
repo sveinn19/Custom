@@ -71,12 +71,18 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 
     public function submitForm(array &$form, FormStateInterface $form_state){
         \Drupal::messenger()->addMessage(t('Jibbi'));
+
+        $_SESSION['con'] = $form_state->getValue('test');
+
+        $url = \Drupal\Core\Url::fromRoute('music_search.cr_content');
+
+        $form_state->setRedirectUrl($url);
     }
 
     private function artist_option($arr){
         $option = [];
         foreach($arr as $key => $value){
-            $option[$value['id']] = '<h2">'.$value['name'].'</h2>'. '<img src='. '"' . $value['images'][0]['url'] . '" width="200">';
+            $option[$key] = '<h2">'.$value['name'].'</h2>'. '<img src='. '"' . $value['images'][0]['url'] . '" width="200">';
         }
 
         return $option;
@@ -85,7 +91,7 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
     private function album_option($arr){
         $option = [];
         foreach($arr as $key => $value){
-            $option[$value['id']] = '<h2">'.$value['name'].'</h2>'. '<h2> Artist: '. $value['artists'][0]['name'] .'</h2>'. '<img src='. '"' . $value['images'][0]['url'] . '" width="200">';
+            $option[$key] = '<h2">'.$value['name'].'</h2>'. '<h2> Artist: '. $value['artists'][0]['name'] .'</h2>'. '<img src='. '"' . $value['images'][0]['url'] . '" width="200">';
         }
 
         return $option;
@@ -95,7 +101,7 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
     private function track_option($arr){
         $option = [];
         foreach($arr as $key => $value){
-            $option[$value['id']] = '<h2">'.$value['name'].'</h2>'. '<h2> Artist: '. $value['artists'][0]['name'] .'</h2>'. '<img src='. '"' . $value['album']['images'][0]['url'] . '" width="200">';
+            $option[$key] = '<h2">'.$value['name'].'</h2>'. '<h2> Artist: '. $value['artists'][0]['name'] .'</h2>'. '<img src='. '"' . $value['album']['images'][0]['url'] . '" width="200">';
         }
 
         return $option;

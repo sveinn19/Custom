@@ -22,5 +22,15 @@ music_search.result_form:
       _title: 'Result of search'
     requirements:
       _permission: 'access content'
+
+
+music_search.cr_content:
+  path: '/confirm-content'
+  defaults:
+    _controller: Drupal\music_search\Controller\MusicSearchController::createContentForm
+    _title: 'Create content.'
+  requirements:
+    _permission: 'access content'
+
     
 
