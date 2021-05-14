@@ -23,7 +23,7 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 
         $form['text'] = array(
             '#type' => 'textfield',
-            '#title' => 'Titillinn',
+            '#title' => $result['followers']['total'],
             '#suffix' => "<pre>".print_r($result, true)."</pre>",
         );
 
