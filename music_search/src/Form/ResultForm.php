@@ -46,11 +46,12 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 
         } elseif ($_SESSION['s2'] == 'album'){
             $arr = $_SESSION['s1']['albums']['items'];
+            $arr_discogs = $_SESSION['d1']['results'];
 
             $form['test'] = array(
                 '#type' => 'radios',
                 '#suffix' => '<pre>' . print_r($arr, true) . '</pre>',
-                '#options' => $this->album_option($arr),
+                '#options' => array_merge($this->album_option($arr), $this->discogs_album_option($arr_discogs)),
             );
 
         } elseif ($_SESSION['s2'] == 'track'){
@@ -85,7 +86,7 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
     private function artist_option($arr){
         $option = [];
         foreach($arr as $key => $value){
-            $option[$key . ' sp'] = '<h2">'.$value['name'].'</h2>'. '<img src='. '"' . $value['images'][0]['url'] . '" width="200">';
+            $option[$key . ' sp'] = '<p>Spotify</p><h2">'.$value['name'].'</h2>'. '<img src='. '"' . $value['images'][0]['url'] . '" width="200">';
         }
 
         return $option;
@@ -94,7 +95,7 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
     private function discogs_artist_option($arr){
         $option = [];
         foreach($arr as $key => $value){
-            $option[$key . ' dc'] = '<h2">'.$value['title'].'</h2>'. '<img src='. '"' . $value['cover_image'] . '" width="200">';
+            $option[$key . ' dc'] = '<p>Discogs</p><h2">'.$value['title'].'</h2>'. '<img src='. '"' . $value['cover_image'] . '" width="200">';
         }
 
         return $option;
@@ -103,17 +104,28 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
     private function album_option($arr){
         $option = [];
         foreach($arr as $key => $value){
-            $option[$key] = '<h2">'.$value['name'].'</h2>'. '<h2> Artist: '. $value['artists'][0]['name'] .'</h2>'. '<img src='. '"' . $value['images'][0]['url'] . '" width="200">';
+            $option[$key] = '<p>Spotify</p><h2">'.$value['name'].'</h2>'. '<h2> Artist: '. $value['artists'][0]['name'] .'</h2>'. '<img src='. '"' . $value['images'][0]['url'] . '" width="200">';
         }
 
         return $option;
 
     }
 
+    private function discogs_album_option($arr){
+        $option = [];
+        foreach($arr as $key => $value){
+            $option[$key] = '<p>Discogs</p><h2">'. $value['title'].'</h2>'. '<img src='. '"' . $value['cover_image'] . '" width="200">';
+        }
+
+        return $option;
+
+    }
+
+
     private function track_option($arr){
         $option = [];
         foreach($arr as $key => $value){
-            $option[$key] = '<h2">'.$value['name'].'</h2>'. '<h2> Artist: '. $value['artists'][0]['name'] .'</h2>'. '<img src='. '"' . $value['album']['images'][0]['url'] . '" width="200">';
+            $option[$key] = '<p>Spotify</p><h2">'.$value['name'].'</h2>'. '<h2> Artist: '. $value['artists'][0]['name'] .'</h2>'. '<img src='. '"' . $value['album']['images'][0]['url'] . '" width="200">';
         }
 
         return $option;

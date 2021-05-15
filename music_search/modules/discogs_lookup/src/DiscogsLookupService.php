@@ -17,8 +17,6 @@ use GuzzleHttp\Client;
     //$cache = $this->_spotify_api_get_cache_search($uri);
     $search_results = null;
   
-    $uri = $uri . '&token=wQeuTSmwtjhtzBqvmmYbDztEUtkNfGoYNMxyDjDG';
-  
     $search_results = \Drupal::httpClient()->get($uri);
       
 

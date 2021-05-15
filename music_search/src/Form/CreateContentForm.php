@@ -12,7 +12,6 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
  */
 
  class CreateContentForm extends FormBase{
-
     public function getFormId(){
         return 'create_content_form';
     }
@@ -21,10 +20,13 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
         $result = $_SESSION['s1'][$_SESSION['s2'] . 's']['items'];//[$_SESSION['con']];
         $_SESSION['result'] = $result;
 
+        $this->get_inputs();
+
         $form['text'] = array(
             '#type' => 'checkboxes',
             '#title' => 'Choose what to create',
-            '#suffix' => "<pre>". print_r($this->get_inputs(), true)."</pre>"
+            '#suffix' => "<h2>Discogs</h2><pre>". print_r($_SESSION['spot-res'], true)."</pre>",
+            '#prefix' => "<h2>Spotify</h2><pre>". print_r($_SESSION['dc-res'], true)."</pre>",
             //'#suffix' => "<pre>".print_r($result, true)."</pre>",
         );
 
@@ -40,7 +42,7 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
     public function submitForm(array &$form, FormStateInterface $form_state){
         \Drupal::messenger()->addMessage(t('CreateContent'));
 
-        $result = $_SESSION['result'];
+        $result = $_SESSION['spot-res'];
         $url = substr($result['external_urls']['spotify'], 8, strlen($result['external_urls']['spotify']));
 
         $node = Node::create([
@@ -58,23 +60,23 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
     }
 
     private function get_inputs(){
-
-        $temp = [];
+        $temp_sp = [];
+        $temp_dc = [];
 
         foreach($_SESSION['con'] as $key => $value){
             if ($value !== 0){
                 //$temp[$key] = [substr($value, -2), substr($value, 0, -2)];
                 if (substr($value, -2) == 'sp'){
-                    array_push($temp, $_SESSION['s1'][$_SESSION['s2'] . 's']['items'][(int)substr($value, 0, -2)]);
+                    array_push($temp_sp, $_SESSION['s1'][$_SESSION['s2'] . 's']['items'][(int)substr($value, 0, -2)]);
                 }
                 else {
-                    array_push($temp, $_SESSION['d1']['results'][(int)substr($value, 0, -2)]);
+                    array_push($temp_dc, $_SESSION['d1']['results'][(int)substr($value, 0, -2)]);
                 }
             }
         }
 
-        
-        return $temp;
+        $_SESSION['spot-res'] = $temp_sp;
+        $_SESSION['dc-res'] = $temp_dc;
     }
 
  }

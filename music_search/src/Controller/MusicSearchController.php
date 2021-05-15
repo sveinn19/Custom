@@ -36,7 +36,7 @@ class MusicSearchController extends ControllerBase {
  
     $uri = 'https://api.spotify.com/v1/search?q=' . $sstring . '&' . 'type=' . $type;
 
-    $uri_discogs = 'https://api.discogs.com/database/search?q='. $sstring . '&' . 'type=' . $type;
+    $uri_discogs = 'https://api.discogs.com/database/search?q='. $sstring . '&' . 'type=' . $this->translateType($type) . '&token=wQeuTSmwtjhtzBqvmmYbDztEUtkNfGoYNMxyDjDG';
 
     $result = $this->spotify_service->_spotify_api_get_query($uri);
     $_SESSION['s1'] = $result;
@@ -55,6 +55,15 @@ class MusicSearchController extends ControllerBase {
     $form = \Drupal::formBuilder()->getForm('Drupal\music_search\Form\CreateContentForm');
     
     return $form;
+
+  }
+
+  private function translateType($type){
+    if ($type == 'album'){
+      return 'release';
+    }
+    return $track;
+
 
   }
 
