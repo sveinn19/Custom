@@ -19,7 +19,7 @@ use GuzzleHttp\Client;
   
     $uri = $uri . '&token=wQeuTSmwtjhtzBqvmmYbDztEUtkNfGoYNMxyDjDG';
   
-    $search_results = \Drupal::httpClient()->get($uri, $options);
+    $search_results = \Drupal::httpClient()->get($uri);
       
 
     if (empty($search_results->error)) {
