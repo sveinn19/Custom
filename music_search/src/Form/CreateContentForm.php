@@ -42,7 +42,7 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
     public function submitForm(array &$form, FormStateInterface $form_state){
         \Drupal::messenger()->addMessage(t('CreateContent'));
 
-        $result = $_SESSION['spot-res'];
+        $result = $_SESSION['spot-res'][0];
         $url = substr($result['external_urls']['spotify'], 8, strlen($result['external_urls']['spotify']));
 
         $node = Node::create([
