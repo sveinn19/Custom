@@ -1,0 +1,3 @@
+services:
+  discogs_lookup.discogs_lookup:
+    class: Drupal\discogs_lookup\DiscogsLookupService

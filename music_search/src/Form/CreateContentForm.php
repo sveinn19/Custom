@@ -18,13 +18,14 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
     }
 
     public function buildForm(array $form, FormStateInterface $form_state){
-        $result = $_SESSION['s1'][$_SESSION['s2'] . 's']['items'][$_SESSION['con']];
+        $result = $_SESSION['s1'][$_SESSION['s2'] . 's']['items'];//[$_SESSION['con']];
         $_SESSION['result'] = $result;
 
         $form['text'] = array(
-            '#type' => 'textfield',
-            '#title' => 'Titillinn',
-            '#suffix' => "<pre>".print_r($result, true)."</pre>",
+            '#type' => 'checkboxes',
+            '#title' => 'Choose what to create',
+            '#suffix' => "<pre>". print_r($this->get_inputs(), true)."</pre>"
+            //'#suffix' => "<pre>".print_r($result, true)."</pre>",
         );
 
         $form['submit'] = array(
@@ -41,7 +42,6 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 
         $result = $_SESSION['result'];
         $url = substr($result['external_urls']['spotify'], 8, strlen($result['external_urls']['spotify']));
-        $img_path = ""
 
         $node = Node::create([
             'type'  => 'listamadur',
@@ -55,6 +55,26 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
           ]);
 
           $node->save();
+    }
+
+    private function get_inputs(){
+
+        $temp = [];
+
+        foreach($_SESSION['con'] as $key => $value){
+            if ($value !== 0){
+                //$temp[$key] = [substr($value, -2), substr($value, 0, -2)];
+                if (substr($value, -2) == 'sp'){
+                    array_push($temp, $_SESSION['s1'][$_SESSION['s2'] . 's']['items'][(int)substr($value, 0, -2)]);
+                }
+                else {
+                    array_push($temp, $_SESSION['d1']['results'][(int)substr($value, 0, -2)]);
+                }
+            }
+        }
+
+        
+        return $temp;
     }
 
  }

@@ -34,11 +34,14 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 
         if ($_SESSION['s2'] == 'artist'){
             $arr = $_SESSION['s1']['artists']['items'];
+            $arr_discogs = $_SESSION['d1']['results'];
 
             $form['test'] = array(                
-                '#suffix' => '<pre>' . print_r($arr, true) . '</pre>',
-                '#options' => $this->artist_option($arr),
-                '#type' => 'radios',
+                //'#suffix' => '<pre>' . print_r($arr, true) . '</pre></br>' . '<pre>' . print_r($arr_discogs, true) . '</pre>',
+                '#suffix' => '<pre>' . print_r($arr_discogs, true) . '</pre>',
+                '#options' => array_merge($this->artist_option($arr), $this->discogs_artist_option($arr_discogs)),
+                //'#options' => array_merge($this->artist_option($arr), $this->discogs_artist_option($arr_discogs)),
+                '#type' => 'checkboxes',
             );
 
         } elseif ($_SESSION['s2'] == 'album'){
@@ -82,7 +85,16 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
     private function artist_option($arr){
         $option = [];
         foreach($arr as $key => $value){
-            $option[$key] = '<h2">'.$value['name'].'</h2>'. '<img src='. '"' . $value['images'][0]['url'] . '" width="200">';
+            $option[$key . ' sp'] = '<h2">'.$value['name'].'</h2>'. '<img src='. '"' . $value['images'][0]['url'] . '" width="200">';
+        }
+
+        return $option;
+    }
+
+    private function discogs_artist_option($arr){
+        $option = [];
+        foreach($arr as $key => $value){
+            $option[$key . ' dc'] = '<h2">'.$value['title'].'</h2>'. '<img src='. '"' . $value['cover_image'] . '" width="200">';
         }
 
         return $option;

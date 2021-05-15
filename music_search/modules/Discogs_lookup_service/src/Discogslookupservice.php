@@ -1,7 +1,0 @@
-<?php
-
-/**
- * 
- * TO BE IMPLEMENTED
- * 
- */

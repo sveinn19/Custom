@@ -1,3 +1,0 @@
-services:
-  Discogs_lookup.Discogs_lookup:
-    class: Drupal\music_search\modules\Discogs_lookup_service
