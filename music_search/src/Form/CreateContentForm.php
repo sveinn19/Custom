@@ -25,8 +25,8 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
         $form['text'] = array(
             '#type' => 'checkboxes',
             '#title' => 'Choose what to create',
-            '#suffix' => "<h2>Discogs</h2><pre>". print_r($_SESSION['spot-res'], true)."</pre>",
-            '#prefix' => "<h2>Spotify</h2><pre>". print_r($_SESSION['dc-res'], true)."</pre>",
+            '#suffix' => "<h2>Spotify</h2><pre>". print_r($_SESSION['spot-res'], true)."</pre>",
+            '#prefix' => "<h2>Discogs</h2><pre>". print_r($_SESSION['dc-res'], true)."</pre>",
             //'#suffix' => "<pre>".print_r($result, true)."</pre>",
         );
 
@@ -42,7 +42,7 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
     public function submitForm(array &$form, FormStateInterface $form_state){
         \Drupal::messenger()->addMessage(t('CreateContent'));
 
-        $result = $_SESSION['spot-res'];
+        $result = $_SESSION['spot-res'][0];
         $url = substr($result['external_urls']['spotify'], 8, strlen($result['external_urls']['spotify']));
 
         $node = Node::create([
