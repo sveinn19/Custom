@@ -7,6 +7,7 @@ use Drupal\Core\Url;
 use Drupal\node\Entity\Node;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use \Drupal\Core\Database;
 
 /**
 * Form for searching music.
@@ -109,10 +110,23 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
             );
         }
 
+        //$node_title = \Drupal::database()->select('node_field_nafn', 'Travis');
+
+        $database = \Drupal::database();
+        $query = $database->query("SELECT nid FROM {node} WHERE type='listamadur'");
+        $result_db = $query->fetchAll();
+       // \Drupal\node\Entity\Node::load(get_object_vars($result_db[0])['nid'])->title->getValue()[0]['value']
+        $tmp = [];
+       foreach($result_db as $key => $value){
+            array_push($tmp, \Drupal\node\Entity\Node::load(get_object_vars($value)['nid'])->title->getValue()[0]['value']);
+       }
+
+
         $form['text'] = array(
             '#type' => 'checkboxes',
             '#title' => 'Choose what to create',
-            '#suffix' => "<h2>Spotify</h2><pre>". print_r($_SESSION['spot-res'], true)."</pre>",
+            '#suffix' => "<h2>Spotify</h2><pre>". print_r($tmp, true)."</pre>",
+            //'#suffix' => "<h2>Spotify</h2><pre>". print_r($_SESSION['spot-res'], true)."</pre>",
             '#prefix' => "<h2>Discogs</h2><pre>". print_r($_SESSION['dc-res'], true)."</pre>",
             //'#suffix' => "<pre>".print_r($result, true)."</pre>",
         );
@@ -279,7 +293,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
     }
 
     public function submitForm(array &$form, FormStateInterface $form_state){
-        \Drupal::messenger()->addMessage(t('CreateContent  ') . print_r($form_state->getValues(), true));
+        \Drupal::messenger()->addMessage(t('CreateContent  ') . print_r($form_state->getValues('tracks'), true));
 
         // $result = $_SESSION['spot-res'][0];
         // $url = substr($result['external_urls']['spotify'], 8, strlen($result['external_urls']['spotify']));
@@ -299,7 +313,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
           $node->save();
         }
         elseif($_SESSION['s2'] == 'album'){
-            $track_node = $this -> createTrackNode();
+            $track_nodes = $this -> createTrackNode($_SESSION['spot-res'], $form_state);
             $artist_node = $this -> createArtistNode($form_state);
             $label_node = $this -> createLabelNode($form_state);
             //$genre_node = $this -> createGenreNode($form_state);
@@ -308,14 +322,25 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
                 'title' => $form_state -> getValue('nafn'),
                 
             ]);
-            $node->field_nafn_a_lagi = array(
-                'target_id' => $track_node->id(),
-                //'spotifyid' => 'lag',
-                //'target_type' => 'lag',
-                'options' => [],
-              );    
+            
+            // foreach($form_state->getValue('tracks') as $key => $value){
+            //     $node->field_nafn_a_lagi = array(
+            //         'target_id' => $this->createTrackNode($value)->id(),
+            //         //'spotifyid' => 'lag',
+            //         //'target_type' => 'lag',
+            //         'options' => [],
+            //       );    
+            // }
+            foreach($track_nodes as $key => $value){
+                $node->field_nafn_a_lagi = array(
+                    'target_id' => $value,
+                    //'spotifyid' => 'lag',
+                    //'target_type' => 'lag',
+                    'options' => [],
+                );
+            }
 
-            $node->field_lysing->value = 'ÞETTA ER PLATAN X';
+            $node->field_lysing->value = $form_state->getValue('description');
             $node->field_flytjandi =  array(
                 'target_id' => $artist_node -> id(),
                 'options' => [],
@@ -329,28 +354,83 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
                 'options' => [],
             );
             $node ->field_utgafuar -> value = '1987';
+            $node->field_spotify -> value = $this->findSpotifyLink($_SESSION['spot-res'], $form_state -> getValue('nafn'));
         }
 
         $node -> save();
         //$this -> createTrackNode();
     }
 
-    private function createTrackNode(){
-        $node = Node::Create([
-            'type' => 'lag',
-            'title' => 'Þetta er lag',           
-        ]);
-        $node ->field_lengd -> value= 3;
-        $node->set('field_spotifyid', [
-            'uri' => 'https://www.visir.is/g/20212109977d/medlimur-islenska-eurovision-hopsins-med-covid?fbclid=IwAR3suiNtneU9sj1WnFgDI9_di_rfRu-JcDS-MM6lrYMrJZC_yFA3dyPYxus',//$result['external_urls']['spotify'],
-            'title' => 'GOOGLE',// $result['external_urls']['spotify'],
-            'options' => [],
-          ]);
-        $node->save();
-        return $node;
+    private function findSpotifyLink($spotify, $name){
+        foreach($spotify as $key => $value){
+            if($value['name'] == $name){
+                return $value['external_urls']['spotify'];
+            }
+        }
+    }
+
+    private function createTrackNode($spotify, $form_state){
+
+        $tmp = [];
+        $store = [];
+
+        foreach($spotify as $key => $value){
+            foreach($value['tracks']['items'] as $key2 => $value2){
+                foreach($form_state->getValue('tracks') as $key3 => $value3){
+                    if($value2['href'] == $value3 && !in_array($value3, $store)){
+                        $node = Node::Create([
+                            'type' => 'lag',
+                            'title' => $value2['name'],           
+                        ]);
+                        $node ->field_lengd -> value= $value2['duration_ms'];
+                        $node->set('field_spotifyid', [
+                            'uri' => $value2['external_urls']['spotify'],//$res['external_links']['spotify'],//$result['external_urls']['spotify'],
+                            'title' => $value2['external_urls']['spotify'],//$res['external_links']['spotify'],// $result['external_urls']['spotify'],
+                            'options' => [],
+                          ]);
+                        $node->save();
+                        array_push($tmp, $node->id());
+                        array_push($store, $value3);
+                    }
+            }
+
+
+                //$option[$value2['href']] = $value2['name'] . '. (Duration: ' . round((int)$value2['duration_ms']/60000, 2) . ' mín)' . ' (Spotify)';
+            }
+        }
+
+        return $tmp;
+
+    //     return $option;
+    //    // $res = $this->spotify_service->_spotify_api_get_query($uri);
+    //     $node = Node::Create([
+    //         'type' => 'lag',
+    //         'title' => 'lag',           
+    //     ]);
+    //     $node ->field_lengd -> value= $res['duration_ms'];
+    //     $node->set('field_spotifyid', [
+    //         'uri' => 'https://www.visir.is/',//$res['external_links']['spotify'],//$result['external_urls']['spotify'],
+    //         'title' => 'https://www.visir.is/',//$res['external_links']['spotify'],// $result['external_urls']['spotify'],
+    //         'options' => [],
+    //       ]);
+    //     $node->save();
+    //     return $node;
     }
 
     private function createArtistNode($form_state){
+        $database = \Drupal::database();
+        $query = $database->query("SELECT nid FROM {node} WHERE type='listamadur'");
+        $result_db = $query->fetchAll();
+       // \Drupal\node\Entity\Node::load(get_object_vars($result_db[0])['nid'])->title->getValue()[0]['value']
+      // $tmp = [];
+       foreach($result_db as $key => $value){
+            $tmp_node = \Drupal\node\Entity\Node::load(get_object_vars($value)['nid']);
+            if($form_state->getValue('artist_name') == $tmp_node->title->getValue()[0]['value']){
+                return $tmp_node;
+            }
+            //array_push($tmp, \Drupal\node\Entity\Node::load(get_object_vars($value)['nid'])->title->getValue()[0]['value']);
+       }
+
         $node = Node::create([
             'type'  => 'listamadur',
             'title' =>  $form_state->getValue('artist_name'), //$result['name'],
@@ -358,8 +438,8 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
           ]);
           $node->field_nafn->value = $form_state->getValue('artist_name');
           $node->set('field_vefsida_listamanns', [
-            'uri' => 'https://www.visir.is/g/20212109977d/medlimur-islenska-eurovision-hopsins-med-covid?fbclid=IwAR3suiNtneU9sj1WnFgDI9_di_rfRu-JcDS-MM6lrYMrJZC_yFA3dyPYxus',//$result['external_urls']['spotify'],
-            'title' => 'AFRAM DAÐI',// $result['external_urls']['spotify'],
+            'uri' => $this->findSpotifyLink($_SESSION['spot-res'], $form_state->getValue('artist_name')),//$result['external_urls']['spotify'],
+            'title' => 'Spotify hlekkur',// $result['external_urls']['spotify'],
             'options' => [],
           ]);
 
@@ -369,6 +449,19 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
     }
 
     private function createLabelNode($form_state){
+        $database = \Drupal::database();
+        $query = $database->query("SELECT nid FROM {node} WHERE type='utgefandi'");
+        $result_db = $query->fetchAll();
+       // \Drupal\node\Entity\Node::load(get_object_vars($result_db[0])['nid'])->title->getValue()[0]['value']
+      // $tmp = [];
+       foreach($result_db as $key => $value){
+            $tmp_node = \Drupal\node\Entity\Node::load(get_object_vars($value)['nid']);
+            if($form_state->getValue('label') == $tmp_node->title->getValue()[0]['value']){
+                return $tmp_node;
+            }
+            //array_push($tmp, \Drupal\node\Entity\Node::load(get_object_vars($value)['nid'])->title->getValue()[0]['value']);
+       }
+
         $node = Node::create([
             'type'  => 'utgefandi',
             'title' =>  $form_state->getValue('label'), //$result['name'],
