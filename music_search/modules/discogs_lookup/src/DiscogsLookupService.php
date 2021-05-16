@@ -16,6 +16,17 @@ use GuzzleHttp\Client;
   public function _discogs_api_get_query($uri) {
     //$cache = $this->_spotify_api_get_cache_search($uri);
     $search_results = null;
+
+    $options = array(
+      'method' => 'GET',
+      'timeout' => 3,
+      'headers' => array(
+        'Accept' => 'application/json',
+        'Authorization' => 'Discogs token=wQeuTSmwtjhtzBqvmmYbDztEUtkNfGoYNMxyDjDG',
+        'User-Agent'=> 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:88.0) Gecko/20100101 Firefox/88.0',
+      ),
+    );
+
   
     $search_results = \Drupal::httpClient()->get($uri);
       

@@ -86,7 +86,7 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
     private function artist_option($arr){
         $option = [];
         foreach($arr as $key => $value){
-            $option[$key . ' sp'] = '<p>Spotify</p><h2">'.$value['name'].'</h2>'. '<img src='. '"' . $value['images'][0]['url'] . '" width="200">';
+            $option[$key . ' sp'] = '<img src='. '"' . $value['images'][0]['url'] . '" width="100" >' . t($value['name']).t('  (Spotify)');
         }
 
         return $option;
