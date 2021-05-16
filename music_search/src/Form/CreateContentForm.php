@@ -299,15 +299,17 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
           $node->save();
         }
         elseif($_SESSION['s2'] == 'album'){
+            $track_node = $this -> createTrackNode();
             $node = Node::create([
                 'type' => 'plata',
                 'title' => $form_state -> getValue('nafn'),
                 
             ]);
             $node->field_nafn_a_lagi = array(
-                'title' => $form_state->getValue('nafn'),
-                'spotifyid' => $form_state-> getValue('site'),
-                'target_type' => 'lag',
+                'target_id' => $track_node->id(),
+                //'spotifyid' => 'lag',
+                //'target_type' => 'lag',
+                'options' => [],
               );    
 
             $node->field_lysing->value = 'ÞETTA ER PLATAN X';
@@ -318,7 +320,24 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
         }
 
         $node -> save();
+        //$this -> createTrackNode();
     }
+
+    private function createTrackNode(){
+        $node = Node::Create([
+            'type' => 'lag',
+            'title' => 'Þetta er lag',           
+        ]);
+        $node ->field_lengd -> value= 3;
+        $node->set('field_spotifyid', [
+            'uri' => 'https://www.visir.is/g/20212109977d/medlimur-islenska-eurovision-hopsins-med-covid?fbclid=IwAR3suiNtneU9sj1WnFgDI9_di_rfRu-JcDS-MM6lrYMrJZC_yFA3dyPYxus',//$result['external_urls']['spotify'],
+            'title' => 'GOOGLE',// $result['external_urls']['spotify'],
+            'options' => [],
+          ]);
+        $node->save();
+        return $node;
+    }
+
 
     private function get_inputs(){
         $temp_sp = [];
