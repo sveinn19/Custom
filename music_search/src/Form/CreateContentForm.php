@@ -39,21 +39,27 @@ use \Drupal\Core\Database;
 
         $this->get_inputs();
 
-        $form['nafn'] = array(
-            '#type' => 'radios',
-            '#title' => 'Choose name: ',
-            '#options' => $this->getNames($_SESSION['spot-res'], $_SESSION['dc-res']),
-            //'#suffix' => "<h2>Spotify</h2><pre>". print_r($_SESSION['spot-res'], true)."</pre>",
-            //'#prefix' => "<h2>Discogs</h2><pre>". print_r($_SESSION['dc-res'], true)."</pre>",
-            //'#suffix' => "<pre>".print_r($
-        );
+        if ($_SESSION['s2'] == 'artist' || $_SESSION['s2'] == 'album'){
 
-        $form['image'] = array(
-            '#type' => 'radios',
-            '#title' => 'Choose image: ',
-            '#options' => $this->getImages($_SESSION['spot-res'], $_SESSION['dc-res']),
-            //'#suffix' => "
-        );
+            $form['nafn'] = array(
+                '#type' => 'radios',
+                '#title' => 'Choose name: ',
+                '#options' => $this->getNames($_SESSION['spot-res'], $_SESSION['dc-res']),
+                //'#suffix' => "<h2>Spotify</h2><pre>". print_r($_SESSION['spot-res'], true)."</pre>",
+                //'#prefix' => "<h2>Discogs</h2><pre>". print_r($_SESSION['dc-res'], true)."</pre>",
+                //'#suffix' => "<pre>".print_r($
+            );
+        }
+
+        if ($_SESSION['s2'] == 'artist' || $_SESSION['s2'] == 'album'){
+
+            $form['image'] = array(
+                '#type' => 'radios',
+                '#title' => 'Choose image: ',
+                '#options' => $this->getImages($_SESSION['spot-res'], $_SESSION['dc-res']),
+                //'#suffix' => "
+            );
+        }
 
         if ($_SESSION['s2'] == 'artist'){
 
@@ -72,12 +78,15 @@ use \Drupal\Core\Database;
             );
         }
 
-        $form['description'] = array(
-            '#type' => 'radios',
-            '#title' => 'Choose description: ',
-            '#options' => $this->getDescr($_SESSION['dc-res']),
-            //'#suffix' => "
-        );
+        if ($_SESSION['s2'] == 'artist' || $_SESSION['s2'] == 'album'){
+
+            $form['description'] = array(
+                '#type' => 'radios',
+                '#title' => 'Choose description: ',
+                '#options' => $this->getDescr($_SESSION['dc-res']),
+                //'#suffix' => "
+            );
+        }
 
         if ($_SESSION['s2'] == 'album'){
 
@@ -108,28 +117,43 @@ use \Drupal\Core\Database;
                 '#options' => $this->getLabels($_SESSION['spot-res'], $_SESSION['dc-res']),
                 //'#suffix' => "
             );
+
         }
+
+        if ($_SESSION['s2'] == 'track'){
+            $form['track'] = array(
+                '#type' => 'radios',
+                '#title' => 'Song to create: ',
+                //'#options' => $this->getLabels($_SESSION['spot-res'], $_SESSION['dc-res']),
+                '#suffix' => '<img src='. '"' . $_SESSION['s1']['tracks']['items'][(int)$_SESSION['con']]['album']['images'][0]['url'] . '" width="100" align="center">'.'<strong>'.$_SESSION['s1']['tracks']['items'][(int)$_SESSION['con']]['name'].' (Spotify) </strong>'.t('  Duration: '). round($_SESSION['s1']['tracks']['items'][(int)$_SESSION['con']]['duration_ms']/60000, 2).'<hr>',
+               // print_r($_SESSION['s1']['tracks']['items'][(int)$_SESSION['con']]['external_urls']['spotify'], true),
+                //$_SESSION['s1']['tracks']['items'][(int)$_SESSION['con']]['name']
+            );
+
+        }
+
+
 
         //$node_title = \Drupal::database()->select('node_field_nafn', 'Travis');
 
-        $database = \Drupal::database();
-        $query = $database->query("SELECT nid FROM {node} WHERE type='listamadur'");
-        $result_db = $query->fetchAll();
-       // \Drupal\node\Entity\Node::load(get_object_vars($result_db[0])['nid'])->title->getValue()[0]['value']
-        $tmp = [];
-       foreach($result_db as $key => $value){
-            array_push($tmp, \Drupal\node\Entity\Node::load(get_object_vars($value)['nid'])->title->getValue()[0]['value']);
-       }
+    //     $database = \Drupal::database();
+    //     $query = $database->query("SELECT nid FROM {node} WHERE type='listamadur'");
+    //     $result_db = $query->fetchAll();
+    //    // \Drupal\node\Entity\Node::load(get_object_vars($result_db[0])['nid'])->title->getValue()[0]['value']
+    //     $tmp = [];
+    //     foreach($result_db as $key => $value){
+    //         array_push($tmp, \Drupal\node\Entity\Node::load(get_object_vars($value)['nid'])->title->getValue()[0]['value']);
+    //    }
 
 
-        $form['text'] = array(
-            '#type' => 'checkboxes',
-            '#title' => 'Choose what to create',
-            '#suffix' => "<h2>Spotify</h2><pre>". print_r($tmp, true)."</pre>",
-            //'#suffix' => "<h2>Spotify</h2><pre>". print_r($_SESSION['spot-res'], true)."</pre>",
-            '#prefix' => "<h2>Discogs</h2><pre>". print_r($_SESSION['dc-res'], true)."</pre>",
-            //'#suffix' => "<pre>".print_r($result, true)."</pre>",
-        );
+        // $form['text'] = array(
+        //     '#type' => 'checkboxes',
+        //     '#title' => 'Choose what to create',
+        //     '#suffix' => "<h2>Spotify</h2><pre>". print_r($_SESSION['spot-res'], true)."</pre>",
+        //     //'#suffix' => "<h2>Spotify</h2><pre>". print_r($_SESSION['spot-res'], true)."</pre>",
+        //     '#prefix' => "<h2>Discogs</h2><pre>". print_r($_SESSION['dc-res'], true)."</pre>",
+        //     //'#suffix' => "<pre>".print_r($result, true)."</pre>",
+        // );
 
         $form['submit'] = array(
             '#type' => 'submit',
@@ -293,22 +317,25 @@ use \Drupal\Core\Database;
     }
 
     public function submitForm(array &$form, FormStateInterface $form_state){
-        \Drupal::messenger()->addMessage(t('CreateContent  ') . print_r($form_state->getValues('tracks'), true));
+        \Drupal::messenger()->addMessage(t('CreateContent  ')); //. print_r($form_state->getValues('tracks'), true));
 
         // $result = $_SESSION['spot-res'][0];
         // $url = substr($result['external_urls']['spotify'], 8, strlen($result['external_urls']['spotify']));
         if($_SESSION['s2'] == 'artist'){
+
         $node = Node::create([
             'type'  => 'listamadur',
             'title' =>  $form_state->getValue('nafn'), //$result['name'],
             'body' => $form_state->getValue('description'),
           ]);
           $node->field_nafn->value = $form_state->getValue('nafn');
-          $node->set('field_vefsida_listamanns', [
-            'uri' => $form_state->getValue('site'),//$result['external_urls']['spotify'],
-            'title' =>$form_state->getValue('site'),// $result['external_urls']['spotify'],
-            'options' => [],
-          ]);
+          if(isset($form['site'])){
+            $node->set('field_vefsida_listamanns', [
+                'uri' => $form_state->getValue('site'),//$result['external_urls']['spotify'],
+                'title' =>$form_state->getValue('site'),// $result['external_urls']['spotify'],
+                'options' => [],
+            ]);
+          }
         
           $node->save();
         }
@@ -349,15 +376,38 @@ use \Drupal\Core\Database;
             //    'target_id' => $genre_node -> id(),
             //    'options' => [],
             //);
-            $node ->field_utgefandi = array(
-                'target_id' => $label_node -> id(),
-                'options' => [],
-            );
-            $node ->field_utgafuar -> value = '1987';
+            if ( isset($form['label'])){
+                $node ->field_utgefandi = array(
+                    'target_id' => $label_node -> id(),
+                    'options' => [],
+                );
+            }
+            //$node ->field_utgafuar -> value = '1987';
             $node->field_spotify -> value = $this->findSpotifyLink($_SESSION['spot-res'], $form_state -> getValue('nafn'));
+        } else{
+
+            $node = Node::create([
+                'type'  => 'lag',
+                'title' =>  $_SESSION['s1']['tracks']['items'][(int)$_SESSION['con']]['name'], //$result['name'],
+                //'body' => $form_state->getValue('description'),
+              ]);
+              $node->field_nafn->value = $_SESSION['s1']['tracks']['items'][(int)$_SESSION['con']]['name'];
+              $node->field_lengd->value = round($_SESSION['s1']['tracks']['items'][(int)$_SESSION['con']]['duration_ms']/60000, 2);
+
+                $node->set('field_spotifyid', [
+                    'uri' => $_SESSION['s1']['tracks']['items'][(int)$_SESSION['con']]['external_urls']['spotify'],//$result['external_urls']['spotify'],
+                    'title' =>$_SESSION['s1']['tracks']['items'][(int)$_SESSION['con']]['external_urls']['spotify'],// $result['external_urls']['spotify'],
+                    'options' => [],
+                ]);
+              
+            
+              $node->save();
+            //'#suffix' => '<img src='. '"' . $_SESSION['s1']['tracks']['items'][(int)$_SESSION['con']]['album']['images'][0]['url'] . '" width="100" align="center">'.'<strong>'.$_SESSION['s1']['tracks']['items'][(int)$_SESSION['con']]['name'].' (Spotify) </strong>'.t('  Duration: '). ($_SESSION['s1']['tracks']['items'][(int)$_SESSION['con']]['duration_ms']).'<hr>',
         }
 
         $node -> save();
+
+        
         //$this -> createTrackNode();
     }
 
@@ -490,7 +540,7 @@ use \Drupal\Core\Database;
             if ($value !== 0){
                 //$temp[$key] = [substr($value, -2), substr($value, 0, -2)];
                 if (substr($value, -2) == 'sp'){
-                    if($_SESSION['s2'] == 'artist'){
+                    if($_SESSION['s2'] == 'artist' || $_SESSION['s2'] == 'track'){
                         array_push($temp_sp, $_SESSION['s1'][$_SESSION['s2'] . 's']['items'][(int)substr($value, 0, -2)]);
                     }
                     elseif($_SESSION['s2'] == 'album'){

@@ -1,3 +1,0 @@
-services:
-  spotify.spotify_serv:
-    class: Drupal\spotify\spotify

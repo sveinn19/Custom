@@ -38,7 +38,7 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 
             $form['test'] = array(                
                 //'#suffix' => '<pre>' . print_r($arr, true) . '</pre></br>' . '<pre>' . print_r($arr_discogs, true) . '</pre>',
-                '#suffix' => '<pre>' . print_r($arr_discogs, true) . '</pre>',
+                //'#suffix' => '<pre>' . print_r($arr_discogs, true) . '</pre>',
                 '#options' => array_merge($this->artist_option($arr), $this->discogs_artist_option($arr_discogs)),
                 //'#options' => array_merge($this->artist_option($arr), $this->discogs_artist_option($arr_discogs)),
                 '#type' => 'checkboxes',
@@ -50,7 +50,7 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 
             $form['test'] = array(
                 '#type' => 'checkboxes',
-                '#suffix' => '<pre>' . print_r($arr, true) . '</pre>',
+             //   '#suffix' => '<pre>' . print_r($arr, true) . '</pre>',
                 '#options' => array_merge($this->album_option($arr), $this->discogs_album_option($arr_discogs)),
             );
 
@@ -59,7 +59,7 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 
             $form['test'] = array(
                 '#type' => 'radios',
-                '#suffix' => '<pre>' . print_r($arr, true) . '</pre>',
+              //  '#suffix' => '<pre>' . print_r($arr, true) . '</pre>',
                 '#options' => $this->track_option($arr),
             );
         }
@@ -74,7 +74,7 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
     }
 
     public function submitForm(array &$form, FormStateInterface $form_state){
-        \Drupal::messenger()->addMessage(t('Jibbi'));
+        //\Drupal::messenger()->addMessage(t('Jibbi'));
 
         $_SESSION['con'] = $form_state->getValue('test');
 
