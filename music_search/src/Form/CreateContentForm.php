@@ -178,7 +178,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 
         // $result = $_SESSION['spot-res'][0];
         // $url = substr($result['external_urls']['spotify'], 8, strlen($result['external_urls']['spotify']));
-
+        if($_SESSION['type'] == 'artist'){
         $node = Node::create([
             'type'  => 'listamadur',
             'title' =>  $form_state->getValue('nafn'), //$result['name'],
@@ -192,6 +192,10 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
           ]);
         
           $node->save();
+        }
+        elseif($_SESSION['type'] == 'album'){
+            //TODO create album
+        }
     }
 
     private function get_inputs(){
