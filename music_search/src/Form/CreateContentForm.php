@@ -300,6 +300,9 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
         }
         elseif($_SESSION['s2'] == 'album'){
             $track_node = $this -> createTrackNode();
+            $artist_node = $this -> createArtistNode($form_state);
+            $label_node = $this -> createLabelNode($form_state);
+            //$genre_node = $this -> createGenreNode($form_state);
             $node = Node::create([
                 'type' => 'plata',
                 'title' => $form_state -> getValue('nafn'),
@@ -313,9 +316,18 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
               );    
 
             $node->field_lysing->value = 'ÞETTA ER PLATAN X';
-            $node->field_flytjandi->value = 'Guns N Roses';
-            $node ->field_typa -> value = 'Rap';
-            $node ->field_utgefandi-> value = 'Glenn Records';
+            $node->field_flytjandi =  array(
+                'target_id' => $artist_node -> id(),
+                'options' => [],
+            );
+            //$node ->field_typa = array(
+            //    'target_id' => $genre_node -> id(),
+            //    'options' => [],
+            //);
+            $node ->field_utgefandi = array(
+                'target_id' => $label_node -> id(),
+                'options' => [],
+            );
             $node ->field_utgafuar -> value = '1987';
         }
 
@@ -338,6 +350,44 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
         return $node;
     }
 
+    private function createArtistNode($form_state){
+        $node = Node::create([
+            'type'  => 'listamadur',
+            'title' =>  $form_state->getValue('artist_name'), //$result['name'],
+            'body' => $form_state->getValue('description'),
+          ]);
+          $node->field_nafn->value = $form_state->getValue('artist_name');
+          $node->set('field_vefsida_listamanns', [
+            'uri' => 'https://www.visir.is/g/20212109977d/medlimur-islenska-eurovision-hopsins-med-covid?fbclid=IwAR3suiNtneU9sj1WnFgDI9_di_rfRu-JcDS-MM6lrYMrJZC_yFA3dyPYxus',//$result['external_urls']['spotify'],
+            'title' => 'AFRAM DAÐI',// $result['external_urls']['spotify'],
+            'options' => [],
+          ]);
+
+        $node ->save();
+        return $node;
+
+    }
+
+    private function createLabelNode($form_state){
+        $node = Node::create([
+            'type'  => 'utgefandi',
+            'title' =>  $form_state->getValue('label'), //$result['name'],
+            'body' => $form_state->getValue('description'),
+          ]);
+            
+        $node -> save();
+        return $node;  
+    }
+
+    private function createGenreNode($form_state){
+        $node = Node::create([
+            'type'  => 'tegund_tonlistar',
+            'title' =>  $form_state->getValue('genre'), //$result['name'],
+            'body' => $form_state->getValue('genre'),
+          ]);
+        $node -> save();
+        return $node; 
+    }
 
     private function get_inputs(){
         $temp_sp = [];
