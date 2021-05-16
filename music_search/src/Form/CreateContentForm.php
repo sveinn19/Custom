@@ -174,22 +174,23 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
     }
 
     public function submitForm(array &$form, FormStateInterface $form_state){
-        \Drupal::messenger()->addMessage(t('CreateContent'));
+        \Drupal::messenger()->addMessage(t('CreateContent  ') . print_r($form_state->getValues(), true));
 
-        $result = $_SESSION['spot-res'][0];
-        $url = substr($result['external_urls']['spotify'], 8, strlen($result['external_urls']['spotify']));
+        // $result = $_SESSION['spot-res'][0];
+        // $url = substr($result['external_urls']['spotify'], 8, strlen($result['external_urls']['spotify']));
 
         $node = Node::create([
             'type'  => 'listamadur',
-            'title' =>  $result['name'],
+            'title' =>  $form_state->getValue('nafn'), //$result['name'],
+            'body' => $form_state->getValue('description'),
           ]);
-          $node->field_nafn->value = $result['name'];
+          $node->field_nafn->value = $form_state->getValue('nafn');
           $node->set('field_vefsida_listamanns', [
-            'uri' => $result['external_urls']['spotify'],
-            'title' => $result['external_urls']['spotify'],
+            'uri' => $form_state->getValue('site'),//$result['external_urls']['spotify'],
+            'title' =>$form_state->getValue('site'),// $result['external_urls']['spotify'],
             'options' => [],
           ]);
-
+        
           $node->save();
     }
 
@@ -201,7 +202,11 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
             if ($value !== 0){
                 //$temp[$key] = [substr($value, -2), substr($value, 0, -2)];
                 if (substr($value, -2) == 'sp'){
+                    // if($_SESSION['s2'] == 'album'){
+                    //     array_push($temp_sp, $_SESSION['s1'][(int)substr($value, 0, -2)]);
+                    // }else {
                     array_push($temp_sp, $_SESSION['s1'][$_SESSION['s2'] . 's']['items'][(int)substr($value, 0, -2)]);
+                    
                 }
                 else {
                     $tmp = $this->discogs_service->_discogs_api_get_query($_SESSION['d1']['results'][(int)substr($value, 0, -2)]['resource_url']);
