@@ -54,19 +54,22 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
             //'#suffix' => "
         );
 
-        $form['site'] = array(
-            '#type' => 'radios',
-            '#title' => 'Choose website: ',
-            '#options' => $this->getSites($_SESSION['spot-res'], $_SESSION['dc-res']),
-            //'#suffix' => "
-        );
+        if ($_SESSION['s2'] == 'artist'){
 
-        $form['members'] = array(
-            '#type' => 'checkboxes',
-            '#title' => 'Add members: ',
-            '#options' => $this->getMembers($_SESSION['dc-res']),
-            //'#suffix' => "
-        );
+            $form['site'] = array(
+                '#type' => 'radios',
+                '#title' => 'Choose website: ',
+                '#options' => $this->getSites($_SESSION['spot-res'], $_SESSION['dc-res']),
+                //'#suffix' => "
+            );
+
+            $form['members'] = array(
+                '#type' => 'checkboxes',
+                '#title' => 'Add members: ',
+                '#options' => $this->getMembers($_SESSION['dc-res']),
+                //'#suffix' => "
+            );
+        }
 
         $form['description'] = array(
             '#type' => 'radios',
@@ -74,6 +77,37 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
             '#options' => $this->getDescr($_SESSION['dc-res']),
             //'#suffix' => "
         );
+
+        if ($_SESSION['s2'] == 'album'){
+
+            $form['artist_name'] = array(
+                '#type' => 'radios',
+                '#title' => 'Choose artist: ',
+                '#options' => $this->getArtist($_SESSION['spot-res'], $_SESSION['dc-res']),
+                //'#suffix' => "
+            );
+
+            $form['genre'] = array(
+                '#type' => 'radios',
+                '#title' => 'Choose genre: ',
+                '#options' => $this->getGenres($_SESSION['dc-res']),
+                //'#suffix' => "
+            );
+
+            $form['tracks'] = array(
+                '#type' => 'checkboxes',
+                '#title' => 'Choose songs: ',
+                '#options' => $this->getTracks($_SESSION['spot-res']),
+                //'#suffix' => "
+            );
+
+            $form['label'] = array(
+                '#type' => 'radios',
+                '#title' => 'Choose label: ',
+                '#options' => $this->getLabels($_SESSION['spot-res'], $_SESSION['dc-res']),
+                //'#suffix' => "
+            );
+        }
 
         $form['text'] = array(
             '#type' => 'checkboxes',
@@ -92,10 +126,75 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
         return $form;
     }
 
+    private function getLabels($spotify, $discogs){
+        $option = [];
+        foreach($spotify as $key => $value){
+            $option[$value['label']] = ($value['label']).t('  (Spotify)');
+            
+        }
+
+        foreach($discogs as $key => $value){
+            foreach($value['labels'] as $key2 => $value2){
+                $option[$value2['name']] = ($value2['name']).t('  (Discogs)');
+            }
+        }
+
+        return $option;
+
+    }
+
+    private function getTracks($spotify){
+        $option = [];
+        foreach($spotify as $key => $value){
+            foreach($value['tracks']['items'] as $key2 => $value2){
+                $option[$value2['href']] = $value2['name'] . '. (Duration: ' . round((int)$value2['duration_ms']/60000, 2) . ' mín)' . ' (Spotify)';
+
+            }
+            
+        }
+
+        return $option;
+
+    }
+
+    private function getGenres($discogs){
+        $option = [];
+        foreach($discogs as $key => $value){
+            foreach($value['genres'] as $key2 => $value2){
+                $option[$value2] = ($value2).t('  (Discogs)');
+            }
+        }
+
+        return $option;
+
+    }
+    private function getArtist($spotify, $discogs){
+        //TODO FIX 
+
+        $option = [];
+        foreach($spotify as $key => $value){
+            $option[$value['artists'][0]['name']] = t($value['artists'][0]['name']).t('  (Spotify)');
+            
+        }
+
+        foreach($discogs as $key => $value){
+            $option[$value['artists'][0]['name']] = ($value['artists'][0]['name']).t('  (Discogs)');
+
+        }
+
+        return $option;
+
+    }
+
     private function getDescr($discogs){
         $option = [];
         foreach($discogs as $key => $value){
-            $option[$value['profile']] = $value['profile'] . '  (Discogs)';
+            if ($_SESSION['s2'] == 'artist'){
+                $option[$value['profile']] = $value['profile'] . '  (Discogs)';
+            }
+            elseif ($_SESSION['s2'] == 'album'){
+                $option[$value['notes']] = $value['notes'] . '  (Discogs)';
+            }
         }
         return $option;
     }
@@ -104,16 +203,22 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
         $option = [];
         foreach($spotify as $key => $value){
             if (!isset($option[$value['name']])){
-                $option[$value['name']] = t($value['name']).t('  (Spotify)');
+                $option[$value['name']] = ($value['name']).t('  (Spotify)');
             }
         }
 
         foreach($discogs as $key => $value){
-            if (!isset($option[$value['name']])){
-                $option[$value['name']] = ($value['name']).t('  (Discogs)');
+            if($_SESSION['s2'] == 'artist'){
+                if (!isset($option[$value['name']])){
+                    $option[$value['name']] = ($value['name']).t('  (Discogs)');
+                }
+                if (!isset($option[$value['realname']])){
+                    $option[$value['realname']] = ($value['realname']).t('  (Discogs)');
+                }
             }
-            if (!isset($option[$value['realname']])){
-                $option[$value['realname']] = ($value['realname']).t('  (Discogs)');
+            elseif($_SESSION['s2'] == 'album'){
+                $option[$value['title']] = ($value['title']).t('  (Discogs)');
+
             }
         }
 
@@ -129,7 +234,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
         }
 
         foreach($discogs as $key => $value){
-            $option[$value['cover_image']] = '<img src='. '"' . $value['cover_image'] . '" width="200"> (  Discogs)';
+            $option[$value['cover_image']] = '<img src='. '"' . $value['cover_image'] . '" width="100"> (  Discogs)';
         }
 
 
@@ -206,11 +311,12 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
             if ($value !== 0){
                 //$temp[$key] = [substr($value, -2), substr($value, 0, -2)];
                 if (substr($value, -2) == 'sp'){
-                    // if($_SESSION['s2'] == 'album'){
-                    //     array_push($temp_sp, $_SESSION['s1'][(int)substr($value, 0, -2)]);
-                    // }else {
-                    array_push($temp_sp, $_SESSION['s1'][$_SESSION['s2'] . 's']['items'][(int)substr($value, 0, -2)]);
-                    
+                    if($_SESSION['s2'] == 'artist'){
+                        array_push($temp_sp, $_SESSION['s1'][$_SESSION['s2'] . 's']['items'][(int)substr($value, 0, -2)]);
+                    }
+                    elseif($_SESSION['s2'] == 'album'){
+                        array_push($temp_sp, $this->spotify_service->_spotify_api_get_query($_SESSION['s1'][$_SESSION['s2'] . 's']['items'][(int)substr($value, 0, -2)]['href']));
+                    }
                 }
                 else {
                     $tmp = $this->discogs_service->_discogs_api_get_query($_SESSION['d1']['results'][(int)substr($value, 0, -2)]['resource_url']);
