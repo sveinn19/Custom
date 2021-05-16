@@ -86,7 +86,7 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
     private function artist_option($arr){
         $option = [];
         foreach($arr as $key => $value){
-            $option[$key . ' sp'] = '<img src='. '"' . $value['images'][0]['url'] . '" width="100" >' . t($value['name']).t('  (Spotify)');
+            $option[$key . ' sp'] = '<img src='. '"' . $value['images'][0]['url'] . '" width="100"  align="center">' .'<strong>'. $value['name'].' (Spotify) </strong>'.'<hr>';
         }
 
         return $option;
@@ -95,7 +95,7 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
     private function discogs_artist_option($arr){
         $option = [];
         foreach($arr as $key => $value){
-            $option[$key . ' dc'] = '<p>Discogs</p><h2">'.$value['title'].'</h2>'. '<img src='. '"' . $value['cover_image'] . '" width="200">';
+            $option[$key . ' dc'] = '<img src='. '"' . $value['cover_image'] . '" width="100" align="center">' .'<strong>'.$value['title'].' (Discogs) </strong>'.'<hr>';
         }
 
         return $option;
@@ -104,7 +104,7 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
     private function album_option($arr){
         $option = [];
         foreach($arr as $key => $value){
-            $option[$key . ' sp'] = '<p>Spotify</p><h2">'.$value['name'].'</h2>'. '<h2> Artist: '. $value['artists'][0]['name'] .'</h2>'. '<img src='. '"' . $value['images'][0]['url'] . '" width="200">';
+            $option[$key . ' sp'] = '<img src='. '"' . $value['images'][0]['url'] . '" width="100" align= "center">'.'<strong>'.$value['name'].' (Spotify) </strong>'.t('  By Artist: '). t($value['artists'][0]['name']).'<hr>';
         }
 
         return $option;
@@ -114,7 +114,7 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
     private function discogs_album_option($arr){
         $option = [];
         foreach($arr as $key => $value){
-            $option[$key. ' dc'] = '<p>Discogs</p><h2">'. $value['title'].'</h2>'. '<img src='. '"' . $value['cover_image'] . '" width="200">';
+            $option[$key. ' dc'] = '<img src='. '"' . $value['cover_image'] . '" width="100" align="center">'.'<strong>'. $value['title'].' (Discogs) </strong>'.'<hr>';
         }
 
         return $option;
@@ -125,7 +125,7 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
     private function track_option($arr){
         $option = [];
         foreach($arr as $key => $value){
-            $option[$key] = '<p>Spotify</p><h2">'.$value['name'].'</h2>'. '<h2> Artist: '. $value['artists'][0]['name'] .'</h2>'. '<img src='. '"' . $value['album']['images'][0]['url'] . '" width="200">';
+            $option[$key] = '<img src='. '"' . $value['album']['images'][0]['url'] . '" width="100" align="center">'.'<strong>'.$value['name'].' (Spotify) </strong>'.t('  By Artist: '). t($value['artists'][0]['name']).'<hr>';
         }
 
         return $option;
