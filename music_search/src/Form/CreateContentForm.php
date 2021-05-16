@@ -54,6 +54,27 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
             //'#suffix' => "
         );
 
+        $form['site'] = array(
+            '#type' => 'radios',
+            '#title' => 'Choose website: ',
+            '#options' => $this->getSites($_SESSION['spot-res'], $_SESSION['dc-res']),
+            //'#suffix' => "
+        );
+
+        $form['members'] = array(
+            '#type' => 'checkboxes',
+            '#title' => 'Add members: ',
+            '#options' => $this->getMembers($_SESSION['dc-res']),
+            //'#suffix' => "
+        );
+
+        $form['description'] = array(
+            '#type' => 'radios',
+            '#title' => 'Choose description: ',
+            '#options' => $this->getDescr($_SESSION['dc-res']),
+            //'#suffix' => "
+        );
+
         $form['text'] = array(
             '#type' => 'checkboxes',
             '#title' => 'Choose what to create',
@@ -69,6 +90,14 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
         );
 
         return $form;
+    }
+
+    private function getDescr($discogs){
+        $option = [];
+        foreach($discogs as $key => $value){
+            $option[$value['profile']] = $value['profile'] . '  (Discogs)';
+        }
+        return $option;
     }
 
     private function getNames($spotify, $discogs){
@@ -106,6 +135,42 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 
         return $option;
 
+    }
+
+
+    private function getSites($spotify, $discogs){
+        $option = [];
+        foreach($spotify as $key => $value){
+            $option[$value['external_urls']['spotify']] = $value['external_urls']['spotify'];
+            
+        }
+
+        foreach($discogs as $key => $value){
+            $c = 0;
+            foreach($value['urls'] as $key2 => $value2){
+                if($c !== 5){
+                    $option[$value2] = $value2;
+                }
+                $c++;
+
+            }
+        }
+
+
+        return $option;
+    }
+
+    private function getMembers($discogs){
+        $option = [];
+        foreach($discogs as $key => $value){
+            if (isset($value['members'])){
+                foreach($value['members'] as $key2 => $value2){
+                    $option[$value2['name']] = $value2['name'];
+                }
+            }
+            
+        }
+        return $option;
     }
 
     public function submitForm(array &$form, FormStateInterface $form_state){
