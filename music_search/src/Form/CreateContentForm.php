@@ -178,7 +178,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 
         // $result = $_SESSION['spot-res'][0];
         // $url = substr($result['external_urls']['spotify'], 8, strlen($result['external_urls']['spotify']));
-        if($_SESSION['type'] == 'artist'){
+        if($_SESSION['s2'] == 'artist'){
         $node = Node::create([
             'type'  => 'listamadur',
             'title' =>  $form_state->getValue('nafn'), //$result['name'],
@@ -193,9 +193,26 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
         
           $node->save();
         }
-        elseif($_SESSION['type'] == 'album'){
-            //TODO create album
+        elseif($_SESSION['s2'] == 'album'){
+            $node = Node::create([
+                'type' => 'plata',
+                'title' => $form_state -> getValue('nafn'),
+                
+            ]);
+            $node->field_nafn_a_lagi = array(
+                'title' => $form_state->getValue('nafn'),
+                'spotifyid' => $form_state-> getValue('site'),
+                'target_type' => 'lag',
+              );    
+
+            $node->field_lysing->value = 'ÞETTA ER PLATAN X';
+            $node->field_flytjandi->value = 'Guns N Roses';
+            $node ->field_typa -> value = 'Rap';
+            $node ->field_utgefandi-> value = 'Glenn Records';
+            $node ->field_utgafuar -> value = '1987';
         }
+
+        $node -> save();
     }
 
     private function get_inputs(){
